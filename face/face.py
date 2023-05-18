@@ -21,7 +21,7 @@ while(True):
     #顔検出
     lists = cascade.detectMultiScale(resize_frame, minSize=(50, 50))
     for (x,y,w,h) in lists:
-        img1 = resize_frame[100,100,100,100]
+        img1 = resize_frame[y:y+h,x:x+w]
         
     #顔検出して、特徴点をマークする初歩段階   
     faces = face_detector(resize_frame,1)
