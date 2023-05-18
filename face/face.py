@@ -31,16 +31,16 @@ while(True):
         landmark = face_predictor(img1, face)
         landmark = face_utils.shape_to_np(landmark)
 
+        #ランドマークの値を取得
+        for queue in range(50,69):
+            print(queue)
+
         # ランドマーク描画
         for (i, (x, y)) in enumerate(landmark):
             print(i,(x,y))
             cv2.circle(img1, (x, y), 1, (255, 0, 0), -1)
-    
-    # cv2.imshow("camera",dst_face)
-    # cv2.imshow("camera",resize_frame)
 
-    #Test
-    cv2.imshow("test",img1)
+    cv2.imshow("Realtime Screen",img1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 cap.release()
