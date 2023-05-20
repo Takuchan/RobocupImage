@@ -1,9 +1,13 @@
 import cv2
+import pandas as pd
 import dlib
 from imutils import face_utils
+#おれおりじなるデータいんぽーと
+import faceModel
 
 
-cap = cv2.VideoCapture('hatsuon.mp4')
+#すべてのデータを初期化していきやしょう
+cap = cv2.VideoCapture("hatsuon.mp4")
 xml_path = "haarcascade_frontalcatface.xml"
 cascade = cv2.CascadeClassifier(xml_path)
 
@@ -12,6 +16,7 @@ predictor_path = 'shape_predictor_68_face_landmarks.dat'
 face_predictor = dlib.shape_predictor(predictor_path)
 
 frame_count = 0
+faceallData = []
 while(True):
     print("今のフレーム数は{}".format(frame_count))
     frame_count += 1
@@ -31,15 +36,18 @@ while(True):
         landmark = face_predictor(img1, face)
         landmark = face_utils.shape_to_np(landmark)
 
-        #ランドマークの値を取得
-        for queue in range(50,69):
-            print(queue)
-
-        # ランドマーク描画
+        # ランドマーク描画とデータを保存する
+        coordinate = []
         for (i, (x, y)) in enumerate(landmark):
-            print(i,(x,y))
+            # print(i,(x,y))
             cv2.circle(img1, (x, y), 1, (255, 0, 0), -1)
-
+            tempCordinate = faceModel.singlePointFaceModel()
+            tempCordinate.set_single_point(facePointNumber=i,x_p=x,y_p=y)
+            coordinate.append(tempCordinate)
+    alldata = faceModel.faceAllDataModel()
+    alldata.set_value(list_data=coordinate)
+    faceallData.append(alldata)
+    #画面表示
     cv2.imshow("Realtime Screen",img1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
