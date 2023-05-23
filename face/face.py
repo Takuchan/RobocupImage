@@ -3,8 +3,25 @@ import pandas as pd
 import dlib
 from imutils import face_utils
 import csv
+import math
+import numpy as np
 #おれおりじなるデータいんぽーと
 import faceModel
+
+
+def fitting_rotated_image(img, angle):
+    height,width = img.shape[:2]
+    center = (int(width/2), int(height/2))
+    radians = np.deg2rad(angle)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+    new_width = int(abs(np.sin(radians)*height) + abs(np.cos(radians)*width))
+    new_height = int(abs(np.sin(radians)*width) + abs(np.cos(radians)*height))
+
+    M[0,2] += int((new_width-width)/2)
+    M[1,2] += int((new_height-height)/2)
+
+    return cv2.warpAffine(img, M, (new_width, new_height))
 
 
 
@@ -30,10 +47,47 @@ while(True):
     for (x,y,w,h) in lists:
         img1 = resize_frame[y:y+h,x:x+w]
         img1 = cv2.resize(img1,dsize=(200,200))
-        
+    
+
+    
     #顔検出して、特徴点をマークする初歩段階   
     faces = face_detector(img1,1)
-    
+    for index,rect in enumerate(faces):
+
+        # 顔だけ切り出す
+        rectWidth = rect.width()
+        rectHeight = rect.height()
+        rectCenter = rect.center()
+        x_start = rectCenter.x - rectWidth
+        x_end = x_start + rectWidth*2
+        y_start = rectCenter.y - rectHeight
+        y_end = y_start + rectHeight*2
+        face_im = img1[y_start:y_end, x_start:x_end]
+
+        # 顔の角度を修正
+        points = []
+        for point in face_predictor(img1, rect).parts():
+            points.append([int(point.x), int(point.y)])
+        x_diff = points[45][0] - points[36][0]
+        y_diff = points[45][1] - points[36][1]
+        angle = math.degrees(math.atan2(y_diff, x_diff))
+        rotated_im = fitting_rotated_image(face_im, angle)
+
+        # 回転後の画像で顔検出して画像保存
+        rotated_rects = face_detector(rotated_im, 1)
+        if len(rotated_rects) == 0:
+            print('顔が抽出されませんでした')
+            continue
+
+        rotated_rect = rotated_rects[0]
+        x_start = rotated_rect.left()
+        x_end = rotated_rect.right()
+        y_start = rotated_rect.top()
+        y_end = rotated_rect.bottom()
+        cropped_im = rotated_im[y_start:y_end, x_start:x_end]
+        # cv2.imwrite('face_'+ str(index) +'.jpg', cropped_im)
+
+
     for face in faces:
         landmark = face_predictor(img1, face)
         landmark = face_utils.shape_to_np(landmark)
@@ -49,6 +103,8 @@ while(True):
     alldata = faceModel.faceAllDataModel()
     alldata.set_value(list_data=coordinate)
     faceallData.append(alldata)
+
+
     #画面表示
     cv2.imshow("Realtime Screen",img1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
