@@ -2,8 +2,10 @@ import cv2
 import pandas as pd
 import dlib
 from imutils import face_utils
+import csv
 #おれおりじなるデータいんぽーと
 import faceModel
+
 
 
 #すべてのデータを初期化していきやしょう
@@ -51,5 +53,17 @@ while(True):
     cv2.imshow("Realtime Screen",img1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+
+with open("finish_data.csv","w") as f:
+    writer = csv.writer(f)
+    for a in faceallData:
+        hairetsu = []
+        for b in a.get_value():
+            list_data1 = b.get_single_point()[1]
+            list_data2 = b.get_single_point()[2]
+            hairetsu.append(str(list_data1) + ":" + str(list_data2))
+        writer.writerow(hairetsu)
+        hairetsu = []
 cap.release()
 cv2.destroyAllWindows()
