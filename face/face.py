@@ -21,47 +21,12 @@ frame_count = 0
 faceallData = []
 
 
-def doExecute(importFrame):
-    face_detector = dlib.get_frontal_face_detector()
-
-    # 顔のランドマーク検出ツールの呼び出し
-    predictor_path = 'shape_predictor_68_face_landmarks.dat'
-    face_predictor = dlib.shape_predictor(predictor_path)
-
-    faces = face_detector(importFrame, 1)
-
-
-    # 各顔について処理を行う
-    for face in faces:
-        # 顔のランドマーク（特徴点）を検出
-        landmarks =face_predictor(importFrame, face)
-
-        # 目の座標を取得
-        left_eye = (landmarks.part(36).x, landmarks.part(36).y)
-        right_eye = (landmarks.part(45).x, landmarks.part(45).y)
-
-        # 目の中心座標を計算
-        center_x = int((left_eye[0] + right_eye[0]) / 2)
-        center_y = int((left_eye[1] + right_eye[1]) / 2)
-
-        # 顔の向きを計算
-        angle = -cv2.fastAtan2(right_eye[1] - left_eye[1], right_eye[0] - left_eye[0])
-
-        # 画像の中心座標を計算
-        image_height, image_width = importFrame.shape[:2]
-        image_center = (image_width // 2, image_height // 2)
-
-        # アフィン変換行列を作成して顔を正面に向ける
-        rotation_matrix = cv2.getRotationMatrix2D(image_center, angle, 1.0)
-        rotated_image = cv2.warpAffine(importFrame, rotation_matrix, (image_width, image_height), flags=cv2.INTER_LINEAR)
-
-    
-    return rotated_image
-
 while(True):
     print("今のフレーム数は{}".format(frame_count))
     frame_count += 1
     ret, frame = cap.read()
+    if not ret:
+        break
     frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
     resize_frame = cv2.resize(frame_gray,dsize=None,fx=0.5, fy=0.5)
     #顔検出
@@ -69,7 +34,7 @@ while(True):
     for (x,y,w,h) in lists:
         img1 = resize_frame[y:y+h,x:x+w]
         img1 = cv2.resize(img1,dsize=(200,200))
-    img2 = doExecute(img1)
+    img2 = img1
     #顔検出して、特徴点をマークする初歩段階   
     faces = face_detector(img2,1)
     
