@@ -19,6 +19,7 @@ class rmbackgroundsound:
     def update_plot(self, frame):
         """This is called by matplotlib for each plot update."""
         self.line.set_ydata(self.plotdata)
+        print("ok")
         return self.line,
 
     def main(self):
