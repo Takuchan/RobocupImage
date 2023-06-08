@@ -8,7 +8,7 @@ print(device_list)
 
 sd.default.device = [0, 1]  # Input, Outputデバイス指定
 
-class rmbackgroundsound:
+class showWavefromSound:
     def callback(self, indata, frames, time, status):
         # indata.shape=(n_samples, n_channels)
         data = indata[::self.downsample, 0]
@@ -47,5 +47,5 @@ class rmbackgroundsound:
 
 
 if __name__ == "__main__":
-    rbs = rmbackgroundsound()
+    rbs = showWavefromSound()
     rbs.main()
