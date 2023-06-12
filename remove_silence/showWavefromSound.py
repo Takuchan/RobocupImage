@@ -2,13 +2,16 @@ import sounddevice as sd
 import numpy as np
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
+import time
 
 class showWavefromSound:
+    count = 0
     def __init__(self):
         sd.default.device = [0, 1]  # Input, Outputデバイス指定
 
     def callback(self, indata, frames, time, status):
         # indata.shape=(n_samples, n_channels)
+        self.count +=1
         data = indata[::self.downsample, 0]
         shift = len(data)
         self.plotdata = np.roll(self.plotdata, -shift, axis=0)
