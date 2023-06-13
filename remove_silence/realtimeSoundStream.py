@@ -26,13 +26,15 @@ class streamsound:
                 callback=self.callback
             ):
             sd.sleep(int(duration * 1000))
+        print("finished prosess")
     
     
 class reader:
     def main(self):
         objec = streamsound()
         objec.main()
-    
+
+
 if __name__ == "__main__":
     obj = reader()
     obj.main()

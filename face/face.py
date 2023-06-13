@@ -10,6 +10,8 @@ import faceModel
 
 #すべてのデータを初期化していきやしょう
 cap = cv2.VideoCapture("hatsuon.mp4")
+fps = cap.get(cv2.CAP_PROP_FPS)
+
 xml_path = "haarcascade_frontalcatface.xml"
 cascade = cv2.CascadeClassifier(xml_path)
 
