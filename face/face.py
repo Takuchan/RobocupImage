@@ -9,7 +9,7 @@ import faceModel
 
 
 
-#すべてのデータを初期化していきやしょう
+#すべてのデータを初期化していきやしょうz
 cap = cv2.VideoCapture("hatsuon.mp4")
 fps = cap.get(cv2.CAP_PROP_FPS)
 
