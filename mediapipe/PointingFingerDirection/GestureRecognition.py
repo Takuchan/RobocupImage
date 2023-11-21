@@ -29,7 +29,10 @@ with mp_hands.Hands(
                 for idx, landmark in enumerate(hand_landmarks.landmark):
                     height, width, _ = image.shape
                     cx, cy = int(landmark.x * width), int(landmark.y * height)
+                    print(f"{idx},{cx},{cy}")
                     cv2.putText(image, f"{idx}: ({cx}, {cy})", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+
+
 
                 mp_drawing.draw_landmarks(
                     image,
